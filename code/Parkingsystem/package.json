@@ -1,0 +1,41 @@
+{
+  "name": "parkingsystem",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@paypal/react-paypal-js": "^8.3.0",
+    "@stripe/react-stripe-js": "^2.7.1",
+    "@stripe/stripe-js": "^3.4.1",
+    "bcryptjs": "^2.4.3",
+    "chromedriver": "^124.0.1",
+    "embla-carousel-react": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "keen-slider": "^6.8.6",
+    "mongoose": "^8.4.0",
+    "next": "^14.1.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^5.2.1",
+    "react-loader-spinner": "^6.1.6",
+    "selenium-webdriver": "^4.20.0",
+    "stripe": "^15.8.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^15.0.5",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.3",
+    "jsdom": "^24.0.0",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0",
+    "vitest": "^1.5.3"
+  }
+}
