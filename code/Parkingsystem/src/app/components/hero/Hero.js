@@ -78,7 +78,7 @@ export default function Hero({id}) {
             </p>
             <div className="flex gap-5">
               <Button title={"Available Parking Slots"} event={onParkingAreaClick} bgcolor={"black"} color={"#F0FFFF"} padL={10} padT={5}/>
-              <Button title={"Learn More"} bgcolor={"black"} color={"#F0FFFF"} padL={10} padT={5}/>
+              {/* <Button title={"Learn More"} bgcolor={"black"} color={"#F0FFFF"} padL={10} padT={5}/> */}
             </div>
           </div>
           <div ref={sliderRef} className="keen-slider">

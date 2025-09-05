@@ -24,13 +24,16 @@ export default function Footer() {
         </div>
         <div className="footer-navigation text-blue-400 flex flex-col gap-y-5 text-sm">
           <h2 className=" font-semibold text-white">Discover</h2>
-          <Link href={""} className="hover:scale-105 transition-all">
+          {/* <Link href={"/admin"} className="hover:scale-105 transition-all">
             Your Dashboard
+          </Link> */}
+          <Link href={"/"} className="hover:scale-105 transition-all">
+            Home
           </Link>
-          <Link href={""} className="hover:scale-105 transition-all">
+          {/* <Link href={""} className="hover:scale-105 transition-all">
             About Us
-          </Link>
-          <Link href={""} className="hover:scale-105 transition-all">
+          </Link> */}
+          <Link href={"/contact"} className="hover:scale-105 transition-all">
             Contact
           </Link>
         </div>
@@ -49,16 +52,16 @@ export default function Footer() {
         <div className="social-media text-sm text-blue-400 flex flex-col gap-y-5">
           <h2 className="text-white font-semibold">Follow Us</h2>
           <div className="social-media-icons flex text-lg gap-x-5">
-            <Link href={""} className="hover:scale-105 transition-all">
+            <Link href={"https://www.facebook.com/"} className="hover:scale-105 transition-all">
               <FaFacebook />
             </Link>
-            <Link href={""} className="hover:scale-105 transition-all">
+            <Link href={"https://www.instagram.com/"} className="hover:scale-105 transition-all">
               <FaInstagram />
             </Link>
-            <Link href={""} className="hover:scale-105 transition-all">
+            <Link href={"https://www.linkedin.com/"} className="hover:scale-105 transition-all">
               <FaLinkedin />
             </Link>
-            <Link href={""} className="hover:scale-105 transition-all">
+            <Link href={"https://www.whatsapp.com/"} className="hover:scale-105 transition-all">
               <FaWhatsapp />
             </Link>
           </div>

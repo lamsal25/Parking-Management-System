@@ -33,7 +33,7 @@ export default function Navigation() {
           </div>
         <div className="nav-items flex gap-8 text-sm uppercase ">
             <Link href={"/"} className="hover:scale-105 transition-all">Home</Link>
-            <Link href={""} className="hover:scale-105 transition-all">About Us</Link>
+            {/* <Link href={""} className="hover:scale-105 transition-all">About Us</Link> */}
             <Link href={"/contact"} className="hover:scale-105 transition-all">Contact</Link>
         </div>
           
