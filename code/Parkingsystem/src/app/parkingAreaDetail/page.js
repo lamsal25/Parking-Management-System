@@ -1,16 +1,18 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, use } from "react";
 import Layout from "../components/layout/Layout";
 import { Elements } from "@stripe/react-stripe-js";
 import getStripe from "../../stripe/stripe";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import axios from "axios";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// Use `use` to unwrap searchParams
 function ParkingAreaDetail({ searchParams }) {
-  
-  const data = JSON.parse(searchParams.data);
+  const params = use(searchParams); // unwrap
+  const data = JSON.parse(params.data);
+
   const [price, setPrice] = useState(0);
   const [formData, setFormData] = useState({
     parkingType: "car",
@@ -18,30 +20,23 @@ function ParkingAreaDetail({ searchParams }) {
   });
 
   useEffect(() => {
-    priceCalculation();
-  }, [formData.hours, formData.parkingType]);
+    const totalPrice =
+      formData.parkingType === "car"
+        ? parseInt(data.pricePerHourCar) * formData.hours
+        : parseInt(data.pricePerHourBike) * formData.hours;
 
-  const priceCalculation = () => {
-    let totalPrice = 0;
-    if (formData.parkingType === "car") {
-      totalPrice = parseInt(data.pricePerHourCar) * formData.hours;
-    } else {
-      totalPrice = parseInt(data.pricePerHourBike) * formData.hours;
-    }
     setPrice(totalPrice);
-  };
+  }, [formData, data]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
     <Layout>
       <div className="bg-gray-100 min-h-screen flex flex-col lg:flex-row justify-around items-center">
+        {/* Parking Details */}
         <div className="bg-white shadow-md rounded-lg overflow-hidden w-full lg:w-2/3 max-w-2xl mb-8 lg:mb-0">
           <img
             src={data.imagePath}
@@ -69,6 +64,8 @@ function ParkingAreaDetail({ searchParams }) {
             </div>
           </div>
         </div>
+
+        {/* Stripe Form */}
         <Elements stripe={getStripe()}>
           <ParkingAreaForm
             data={data}
@@ -80,47 +77,44 @@ function ParkingAreaDetail({ searchParams }) {
       </div>
     </Layout>
   );
-}
+};
 
+// Stripe Payment Form
 const ParkingAreaForm = ({ data, price, formData, onInputChange }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
-  const router= useRouter()
+  const router = useRouter();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("hjadsjklas")
 
-    if (!stripe || !elements) {
-      return;
-    }
+    if (!stripe || !elements) return;
 
     const cardElement = elements.getElement(CardElement);
 
     try {
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
-        type: "card",
-        card: cardElement,
+      const { error: stripeError, paymentMethod } =
+        await stripe.createPaymentMethod({
+          type: "card",
+          card: cardElement,
+        });
+
+      if (stripeError) {
+        setError(stripeError.message);
+        return;
+      }
+
+      const { id } = paymentMethod;
+      await axios.post("/api/charge", {
+        amount: price,
+        id,
       });
 
-      if (error) {
-        setError(error.message);
-        console.log(error)
-      } else {
-        const { id } = paymentMethod;
-        const response = await axios.post("/api/charge", {
-          amount: price, // Convert price to cents
-          id,
-        });
-        router.push('/success')
-      }
-    } catch (error) {
-      setError(error.message);
-      console.log(error)
+      router.push("/success");
+    } catch (err) {
+      setError(err.message);
     }
-    console.log(success)
   };
 
   return (
@@ -131,11 +125,9 @@ const ParkingAreaForm = ({ data, price, formData, onInputChange }) => {
       <h2 className="text-2xl text-center uppercase font-semibold mb-4">
         Reserve Parking
       </h2>
+
       <div className="mb-4">
-        <label
-          htmlFor="parkingType"
-          className="block text-gray-700 font-semibold mb-2"
-        >
+        <label htmlFor="parkingType" className="block text-gray-700 font-semibold mb-2">
           Parking Type
         </label>
         <select
@@ -149,11 +141,9 @@ const ParkingAreaForm = ({ data, price, formData, onInputChange }) => {
           <option value="bike">Bike</option>
         </select>
       </div>
+
       <div className="mb-4">
-        <label
-          htmlFor="hours"
-          className="block text-gray-700 font-semibold mb-2"
-        >
+        <label htmlFor="hours" className="block text-gray-700 font-semibold mb-2">
           Number of Hours
         </label>
         <input
@@ -162,24 +152,25 @@ const ParkingAreaForm = ({ data, price, formData, onInputChange }) => {
           name="hours"
           value={formData.hours}
           onChange={onInputChange}
-          className="outline-none border border-gray-400 border-opacity-30 px-5 py-2 w-full"
           min="1"
+          className="outline-none border border-gray-400 border-opacity-30 px-5 py-2 w-full"
         />
       </div>
+
       <div className="price text-blue-600 font-bold text-xl">
-        <span className=" text-gray-950 ">Total Price</span>: ${price}
+        <span className="text-gray-950">Total Price</span>: ${price}
       </div>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition duration-300 w-full"
-        >
-          Proceed to Checkout
-        </button>
-      {error && <div className="text-red-500 mt-4">{error}</div>}
-      {success && (
-        <div className="text-green-500 mt-4">Payment Successful!</div>
-      )}
+
       <CardElement className="mt-4" />
+
+      <button
+        type="submit"
+        className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition duration-300 w-full"
+      >
+        Proceed to Checkout
+      </button>
+
+      {error && <div className="text-red-500 mt-4">{error}</div>}
     </form>
   );
 };
